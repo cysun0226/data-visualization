@@ -3,8 +3,8 @@
     d3 select: https://codepen.io/tarsusi/pen/reovOV
 */
 
-const MAX_WIDTH = 800;
-const MAX_HEIGHT = 800;
+const MAX_WIDTH = 600;
+const MAX_HEIGHT = 600;
 const BACKGROUND = "#F8F9FA";
 const PALETTE = ["#a2d6f9", "#f4d35e", "#28afb0"];
 
@@ -72,13 +72,20 @@ d3.csv("data/iris.csv", data => {
 
     // Update the plot
     function plot() {
-        // remove the previous plot
+        // remove the previous axis & plot
         svg.selectAll("circle").remove();
+        svg.selectAll("g").remove();
+
+        // define the axis domain
+        function extractColumn(arr, column) {
+            return arr.map(r => r[column])
+        }
+        x_data = extractColumn(data, x_selected);
+        y_data = extractColumn(data, y_selected);
 
         // X axis
         let x = d3.scaleLinear()
-            // .domain([Math.floor(Math.min(data[x_selected])), Math.ceil(Math.max(data[x_selected]))])
-            .domain([0, 9])
+            .domain([Math.floor(Math.min.apply(null, x_data)) - 1, Math.ceil(Math.max.apply(null, x_data)) + 1])
             .range([0, width]);
         svg.append("g")
             .attr("transform", "translate(0," + height + ")")
@@ -86,8 +93,7 @@ d3.csv("data/iris.csv", data => {
 
         // Y axis
         let y = d3.scaleLinear()
-            // .domain([Mathfloor(Math.min(data[y_selected])), Math.ceil(Math.max(data[y_selected]))])
-            .domain([0, 9])
+            .domain([Math.floor(Math.min.apply(null, y_data)) - 1, Math.ceil(Math.max.apply(null, y_data)) + 1])
             .range([height, 0]);
         svg.append("g")
             .call(d3.axisLeft(y));
