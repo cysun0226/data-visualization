@@ -13,7 +13,6 @@ var margin = { top: 10, right: 30, bottom: 30, left: 60 },
     width = MAX_WIDTH - margin.left - margin.right,
     height = MAX_HEIGHT - margin.top - margin.bottom;
 
-// append the svg object to the body of the page
 var svg = d3.select("#scatter_plot")
     .append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -53,56 +52,62 @@ d3.csv("data/iris.csv", data => {
         .attr("value", d => { return d; });
 
     // default value and set the selector
-    let x_option = "",
-        y_option = "";
+    let x_selected = allGroup[0],
+        y_selected = allGroup[1];
     d3.select("#select_x").property("selectedIndex", 0);
     d3.select("#select_y").property("selectedIndex", 1);
 
     // when the user selects an option, update
     d3.select("#select_x")
         .on("change", d => {
-            x_option = d3.select("#select_x").node().value;
-            console.log("x = " + x_option);
+            x_selected = d3.select("#select_x").node().value;
+            plot();
         })
 
     d3.select("#select_y")
         .on("change", d => {
-            y_option = d3.select("#select_y").node().value;
-            console.log("y = " + y_option);
+            y_selected = d3.select("#select_y").node().value;
+            plot();
         })
 
     // Update the plot
+    function plot() {
+        // remove the previous plot
+        svg.selectAll("circle").remove();
 
-    // X axis
-    let x = d3.scaleLinear()
-        .domain([4, 8])
-        .range([0, width]);
-    svg.append("g")
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x));
+        // X axis
+        let x = d3.scaleLinear()
+            // .domain([Math.floor(Math.min(data[x_selected])), Math.ceil(Math.max(data[x_selected]))])
+            .domain([0, 9])
+            .range([0, width]);
+        svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x));
 
-    // Y axis
-    let y = d3.scaleLinear()
-        .domain([0, 10])
-        .range([height, 0]);
-    svg.append("g")
-        .call(d3.axisLeft(y));
+        // Y axis
+        let y = d3.scaleLinear()
+            // .domain([Mathfloor(Math.min(data[y_selected])), Math.ceil(Math.max(data[y_selected]))])
+            .domain([0, 9])
+            .range([height, 0]);
+        svg.append("g")
+            .call(d3.axisLeft(y));
 
-    // Color setting: plot three classes with different colors
-    let color = d3.scaleOrdinal()
-        .domain(["Iris-setosa", "Iris-versicolor", "Iris-virginica"])
-        .range(["#a2d6f9", "#f4d35e", "#28afb0"]);
+        // Color setting: plot three classes with different colors
+        let color = d3.scaleOrdinal()
+            .domain(["Iris-setosa", "Iris-versicolor", "Iris-virginica"])
+            .range(["#a2d6f9", "#f4d35e", "#28afb0"]);
 
-    // Plot the data
-    svg.append("g")
-        .selectAll("dot")
-        .data(data)
-        .enter()
-        .append("circle")
-        .attr("cx", d => { return x(d.sepal_length); })
-        .attr("cy", d => { return y(d.petal_length); })
-        .attr("r", 5)
-        .style("fill", d => { return color(d.class) });
+        // Plot the data
+        svg.append("g")
+            .selectAll("dot")
+            .data(data)
+            .enter()
+            .append("circle")
+            .attr("cx", d => { return x(d[x_selected]); })
+            .attr("cy", d => { return y(d[y_selected]); })
+            .attr("r", 5)
+            .style("fill", d => { return color(d.class) });
+    }
+
+    plot();
 });
-
-// console.log(iris_data);
