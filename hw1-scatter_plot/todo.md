@@ -6,13 +6,15 @@
 - [x] Dynamic axis domain (according to the data)
 
 ## Feature
-- [ ] Categorical plot
-    - [ ] legend
+- [x] Categorical plot
+- [ ] legend
+- [x] Transparent color
 - [ ] Titles
     - [ ] Plot
     - [ ] x_axis
     - [ ] y_axis
 - [ ] Adjust CSS / or RWD for x & y axis
+  - [ ] Improve the readability (overlap color)
 - [ ] Dynamic size for the plot
 - [ ] Hover
 - [ ] Zoom in
