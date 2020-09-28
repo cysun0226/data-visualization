@@ -7,6 +7,8 @@ const MAX_WIDTH = 600;
 const MAX_HEIGHT = 600;
 const BACKGROUND = "#F8F9FA";
 const PALETTE = ["#a2d6f9", "#f4d35e", "#28afb0"];
+const LEGEND_WIDTH = 100;
+const LEGEND_HEIGHT = 90;
 
 // set the dimensions and margins of the graph
 var margin = { top: 10, right: 30, bottom: 30, left: 60 },
@@ -75,6 +77,7 @@ d3.csv("data/iris.csv", data => {
         // remove the previous axis & plot
         svg.selectAll("circle").remove();
         svg.selectAll("g").remove();
+        svg.selectAll(".point").remove();
 
         // define the axis domain
         function extractColumn(arr, column) {
@@ -103,16 +106,32 @@ d3.csv("data/iris.csv", data => {
             .domain(["Iris-setosa", "Iris-versicolor", "Iris-virginica"])
             .range(["#a2d6f9", "#f4d35e", "#28afb0"]);
 
+        // symbol generator
+        let symbol = d3.scaleOrdinal()
+            .domain(["Iris-setosa", "Iris-versicolor", "Iris-virginica"])
+            .range([d3.symbolTriangle, d3.symbolCircle, d3.symbolStar]);
+
+        // legend
+        // let legend = d3.select("#legend").append("svg")
+        //     .attr("width", LEGEND_WIDTH)
+        //     .attr("height", LEGEND_HEIGHT);
+        // legend.append("rect")
+        //     .attr("x", 0)
+        //     .attr("y", 0)
+        //     .attr("width", LEGEND_WIDTH)
+        //     .attr("height", LEGEND_HEIGHT)
+        //     .attr("stroke", "black")
+        //     .attr("fill", "white");
+
         // Plot the data
-        svg.append("g")
-            .selectAll("dot")
+        svg.selectAll(".point")
             .data(data)
-            .enter()
-            .append("circle")
-            .attr("cx", d => { return x(d[x_selected]); })
-            .attr("cy", d => { return y(d[y_selected]); })
-            .attr("r", 5)
-            .style("fill", d => { return color(d.class) });
+            .enter().append("path")
+            .attr("class", "point")
+            .attr("d", d3.symbol().type(d => { return symbol(d.class); }))
+            .attr("transform", d => { return "translate(" + x(d[x_selected]) + "," + y(d[y_selected]) + ")"; })
+            .style("fill", d => { return color(d.class) })
+            .style("opacity", 0.75);
     }
 
     plot();
