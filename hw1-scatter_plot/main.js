@@ -59,6 +59,44 @@ d3.csv("data/iris.csv", data => {
     d3.select("#select_x").property("selectedIndex", 0);
     d3.select("#select_y").property("selectedIndex", 1);
 
+    // Color setting: plot three classes with different colors
+    let color = d3.scaleOrdinal()
+        .domain(["Iris-setosa", "Iris-versicolor", "Iris-virginica"])
+        .range(["#a2d6f9", "#f4d35e", "#28afb0"]);
+
+    // symbol generator
+    let symbol = d3.scaleOrdinal()
+        .domain(["Iris-setosa", "Iris-versicolor", "Iris-virginica"])
+        .range([d3.symbolTriangle, d3.symbolCircle, d3.symbolStar]);
+
+    // legend
+    let legendData = [
+        ["Iris-setosa", "#a2d6f9", d3.symbolTriangle],
+        ["Iris-versicolor", "#f4d35e", d3.symbolCircle],
+        ["Iris-virginica", "#28afb0", d3.symbolStar]
+    ];
+    let legend_svg = d3.select("#legend").append("svg")
+        .attr("width", LEGEND_WIDTH)
+        .attr("height", LEGEND_HEIGHT);
+    let legend = legend_svg.append('g')
+        .attr("class", "legend")
+        .attr("height", 0)
+        .attr("width", 0)
+        .attr("transform", "translate(20,20)");
+    let legendRect = legend.selectAll("g").data(legendData);
+    let legendRectE = legendRect.enter()
+        .append("g")
+        .attr("transform", (d, i) => { return "translate(0, " + (i * 20) + ")"; });
+    legendRectE
+        .append("path")
+        .attr("d", d3.symbol().type(d => { return d[2] }))
+        .style("fill", d => { return d[1]; });
+    legendRectE
+        .append("text")
+        .attr("x", 10)
+        .attr("y", 5)
+        .text(d => { return d[0]; });
+
     // when the user selects an option, update
     d3.select("#select_x")
         .on("change", d => {
@@ -116,16 +154,6 @@ d3.csv("data/iris.csv", data => {
             .attr("dy", "1em")
             .style("text-anchor", "middle")
             .text(y_selected);
-
-        // Color setting: plot three classes with different colors
-        let color = d3.scaleOrdinal()
-            .domain(["Iris-setosa", "Iris-versicolor", "Iris-virginica"])
-            .range(["#a2d6f9", "#f4d35e", "#28afb0"]);
-
-        // symbol generator
-        let symbol = d3.scaleOrdinal()
-            .domain(["Iris-setosa", "Iris-versicolor", "Iris-virginica"])
-            .range([d3.symbolTriangle, d3.symbolCircle, d3.symbolStar]);
 
         // Plot the data
         svg.selectAll(".point")
