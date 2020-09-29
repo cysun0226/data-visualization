@@ -7,12 +7,14 @@
 
 ## Feature
 - [x] Categorical plot
-- [ ] legend
+- [x] Legend
+- [ ] Legend location
+- [ ] Verify the content
 - [x] Transparent color
-- [ ] Titles
-    - [ ] Plot
-    - [ ] x_axis
-    - [ ] y_axis
+- [x] Titles
+    - [x] Plot
+    - [x] x_axis
+    - [x] y_axis
 - [ ] Adjust CSS / or RWD for x & y axis
   - [ ] Improve the readability (overlap color)
 - [ ] Dynamic size for the plot
