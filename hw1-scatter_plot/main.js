@@ -7,11 +7,11 @@ const MAX_WIDTH = 600;
 const MAX_HEIGHT = 600;
 const BACKGROUND = "#F8F9FA";
 const PALETTE = ["#a2d6f9", "#f4d35e", "#28afb0"];
-const LEGEND_WIDTH = 100;
+const LEGEND_WIDTH = 150;
 const LEGEND_HEIGHT = 90;
 
 // set the dimensions and margins of the graph
-var margin = { top: 10, right: 30, bottom: 30, left: 60 },
+var margin = { top: 20, right: 20, bottom: 50, left: 60 },
     width = MAX_WIDTH - margin.left - margin.right,
     height = MAX_HEIGHT - margin.top - margin.bottom;
 
@@ -74,10 +74,11 @@ d3.csv("data/iris.csv", data => {
 
     // Update the plot
     function plot() {
-        // remove the previous axis & plot
+        // remove the previous plot
         svg.selectAll("circle").remove();
         svg.selectAll("g").remove();
         svg.selectAll(".point").remove();
+        svg.selectAll("text").remove();
 
         // define the axis domain
         function extractColumn(arr, column) {
@@ -93,6 +94,13 @@ d3.csv("data/iris.csv", data => {
         svg.append("g")
             .attr("transform", "translate(0," + height + ")")
             .call(d3.axisBottom(x));
+        // x-axis label
+        svg.append("text")
+            .attr("transform",
+                "translate(" + (width / 2) + " ," +
+                (height + margin.top + 20) + ")")
+            .style("text-anchor", "middle")
+            .text(x_selected);
 
         // Y axis
         let y = d3.scaleLinear()
@@ -100,6 +108,14 @@ d3.csv("data/iris.csv", data => {
             .range([height, 0]);
         svg.append("g")
             .call(d3.axisLeft(y));
+        // y-axis label
+        svg.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 0 - margin.left)
+            .attr("x", 0 - (height / 2))
+            .attr("dy", "1em")
+            .style("text-anchor", "middle")
+            .text(y_selected);
 
         // Color setting: plot three classes with different colors
         let color = d3.scaleOrdinal()
@@ -110,18 +126,6 @@ d3.csv("data/iris.csv", data => {
         let symbol = d3.scaleOrdinal()
             .domain(["Iris-setosa", "Iris-versicolor", "Iris-virginica"])
             .range([d3.symbolTriangle, d3.symbolCircle, d3.symbolStar]);
-
-        // legend
-        // let legend = d3.select("#legend").append("svg")
-        //     .attr("width", LEGEND_WIDTH)
-        //     .attr("height", LEGEND_HEIGHT);
-        // legend.append("rect")
-        //     .attr("x", 0)
-        //     .attr("y", 0)
-        //     .attr("width", LEGEND_WIDTH)
-        //     .attr("height", LEGEND_HEIGHT)
-        //     .attr("stroke", "black")
-        //     .attr("fill", "white");
 
         // Plot the data
         svg.selectAll(".point")
