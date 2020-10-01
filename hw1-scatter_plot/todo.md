@@ -18,5 +18,9 @@
 - [ ] Adjust CSS / or RWD for x & y axis
   - [ ] Improve the readability (overlap color)
 - [ ] Dynamic size for the plot
-- [ ] Hover
+- [x] Hover (show the point info)
+- [ ] Hover size+/border
 - [ ] Zoom in
+
+# Reference
+tooltip: http://bl.ocks.org/davegotz/bd54b56723c154d25eedde6504d30ad7
