@@ -9,6 +9,7 @@ const BACKGROUND = "#F8F9FA";
 const PALETTE = ["#a2d6f9", "#f4d35e", "#28afb0"];
 const LEGEND_WIDTH = 150;
 const LEGEND_HEIGHT = 90;
+const CSV_FILE = "http://vis.lab.djosix.com:2020/data/iris.csv";
 
 // set the dimensions and margins of the graph
 var margin = { top: 20, right: 20, bottom: 50, left: 60 },
@@ -23,15 +24,17 @@ var svg = d3.select("#scatter_plot")
     .attr("transform",
         "translate(" + margin.left + "," + margin.top + ")");
 
-d3.csv("data/iris.csv", data => {
-    return {
-        // +: convert to number
-        sepal_length: +data["sepal length"],
-        sepal_width: +data["sepal width"],
-        petal_length: +data["petal length"],
-        petal_width: +data["petal width"],
-        class: data["class"]
-    };
+d3.csv(CSV_FILE, data => {
+    if (data["class"] !== "") {
+        return {
+            // +: convert to number
+            sepal_length: +data["sepal length"],
+            sepal_width: +data["sepal width"],
+            petal_length: +data["petal length"],
+            petal_width: +data["petal width"],
+            class: data["class"]
+        };
+    }
 }).then(data => {
     // attributes
     let allGroup = ["sepal_length", "sepal_width", "petal_length", "petal_width"];
