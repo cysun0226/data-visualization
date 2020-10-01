@@ -141,7 +141,7 @@ d3.csv(CSV_FILE, data => {
 
         // X axis
         let x = d3.scaleLinear()
-            .domain([Math.floor(Math.min.apply(null, x_data)) - 1, Math.ceil(Math.max.apply(null, x_data)) + 1])
+            .domain([Math.floor(Math.min.apply(null, x_data)) - 0.5, Math.ceil(Math.max.apply(null, x_data)) + 0.5])
             .range([0, width]);
         svg.append("g")
             .attr("transform", "translate(0," + height + ")")
@@ -156,7 +156,7 @@ d3.csv(CSV_FILE, data => {
 
         // Y axis
         let y = d3.scaleLinear()
-            .domain([Math.floor(Math.min.apply(null, y_data)) - 1, Math.ceil(Math.max.apply(null, y_data)) + 1])
+            .domain([Math.floor(Math.min.apply(null, y_data)) - 0.5, Math.ceil(Math.max.apply(null, y_data)) + 0.5])
             .range([height, 0]);
         svg.append("g")
             .call(d3.axisLeft(y));
