@@ -97,6 +97,17 @@ d3.csv("data/iris.csv", data => {
         .attr("y", 5)
         .text(d => { return d[0]; });
 
+    // tooltip
+    let tool_tip = d3.tip()
+        .attr("class", "d3-tip")
+        .offset([-8, 0])
+        .html(d => {
+            return x_selected + ": " + d[x_selected] + "</br>" +
+                y_selected + ": " + d[y_selected] + "</br>" +
+                "class: " + d["class"];
+        });
+    svg.call(tool_tip);
+
     // when the user selects an option, update
     d3.select("#select_x")
         .on("change", d => {
@@ -163,7 +174,9 @@ d3.csv("data/iris.csv", data => {
             .attr("d", d3.symbol().type(d => { return symbol(d.class); }))
             .attr("transform", d => { return "translate(" + x(d[x_selected]) + "," + y(d[y_selected]) + ")"; })
             .style("fill", d => { return color(d.class) })
-            .style("opacity", 0.75);
+            .style("opacity", 0.75)
+            .on("mouseover", tool_tip.show)
+            .on("mouseout", tool_tip.hide);
     }
 
     plot();
