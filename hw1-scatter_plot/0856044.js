@@ -1,10 +1,5 @@
-/*
-    reference: https://www.d3-graph-gallery.com/graph/scatter_grouped.html
-    d3 select: https://codepen.io/tarsusi/pen/reovOV
-*/
-
-const MAX_WIDTH = 600;
-const MAX_HEIGHT = 600;
+const MAX_WIDTH = 550;
+const MAX_HEIGHT = 550;
 const BACKGROUND = "#F8F9FA";
 const PALETTE = ["#a2d6f9", "#f4d35e", "#28afb0"];
 const LEGEND_WIDTH = 150;
@@ -58,14 +53,14 @@ d3.csv(CSV_FILE, data => {
 
     // default value and set the selector
     let x_selected = allGroup[0],
-        y_selected = allGroup[1];
+        y_selected = allGroup[2];
     d3.select("#select_x").property("selectedIndex", 0);
-    d3.select("#select_y").property("selectedIndex", 1);
+    d3.select("#select_y").property("selectedIndex", 2);
 
     // Color setting: plot three classes with different colors
     let color = d3.scaleOrdinal()
         .domain(["Iris-setosa", "Iris-versicolor", "Iris-virginica"])
-        .range(["#a2d6f9", "#f4d35e", "#28afb0"]);
+        .range([PALETTE[0], PALETTE[1], PALETTE[2]]);
 
     // symbol generator
     let symbol = d3.scaleOrdinal()
@@ -74,9 +69,9 @@ d3.csv(CSV_FILE, data => {
 
     // legend
     let legendData = [
-        ["Iris-setosa", "#a2d6f9", d3.symbolTriangle],
-        ["Iris-versicolor", "#f4d35e", d3.symbolCircle],
-        ["Iris-virginica", "#28afb0", d3.symbolStar]
+        ["Iris-setosa", PALETTE[0], d3.symbolTriangle],
+        ["Iris-versicolor", PALETTE[1], d3.symbolCircle],
+        ["Iris-virginica", PALETTE[2], d3.symbolStar]
     ];
     let legend_svg = d3.select("#legend").append("svg")
         .attr("width", LEGEND_WIDTH)
@@ -177,7 +172,7 @@ d3.csv(CSV_FILE, data => {
             .attr("d", d3.symbol().type(d => { return symbol(d.class); }))
             .attr("transform", d => { return "translate(" + x(d[x_selected]) + "," + y(d[y_selected]) + ")"; })
             .style("fill", d => { return color(d.class) })
-            .style("opacity", 0.75)
+            .style("opacity", 0.70)
             .on("mouseover", tool_tip.show)
             .on("mouseout", tool_tip.hide);
     }
