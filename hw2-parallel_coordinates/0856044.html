@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Iris - Parallel Coordinates</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+</head>
+
+<style>
+    .d3-tip {
+        line-height: 1;
+        padding: 6px;
+        background: rgba(0, 0, 0, 0.8);
+        color: #fff;
+        border-radius: 4px;
+        font-size: 12px;
+    }
+    /* Creates a small triangle extender for the tooltip */
+    
+    .d3-tip:after {
+        box-sizing: border-box;
+        display: inline;
+        font-size: 10px;
+        width: 100%;
+        line-height: 1;
+        color: rgba(0, 0, 0, 0.8);
+        content: "\25BC";
+        position: absolute;
+        text-align: center;
+    }
+    /* Style northward tooltips specifically */
+    
+    .d3-tip.n:after {
+        margin: -2px 0 0 0;
+        top: 100%;
+        left: 0;
+    }
+    
+    #legend {
+        margin-bottom: 10vh;
+    }
+    
+    #legend.g {
+        margin-bottom: 0.5vh;
+    }
+    
+    .select-box {
+        margin-bottom: 3vh;
+        font-weight: bold;
+    }
+    
+    .plot-header {
+        margin-top: 5vh;
+        margin-bottom: 5vh;
+    }
+    
+    h1 {
+        font-weight: bold;
+    }
+    
+    .alert {
+        margin-top: 5vh;
+        padding: 0;
+    }
+</style>
+
+<body>
+    <script src="https://d3js.org/d3.v5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.js"></script>
+
+    <div class="container">
+        <div class="row plot-header">
+            <div class="col">
+                <h1 class="text-center">Iris - Parallel Coordinates Chart</h1>
+            </div>
+        </div>
+        <div class="row align-items-center">
+            <div class="col-8">
+                <div id="parallel_coordinates_plot"></div>
+            </div>
+            <div class="col-4">
+                <div class="row" id="legend"></div>
+                <div class="row select-box">
+                    <span>x_axis:&nbsp;</span>
+                    <select name="x select button" id="select_x"></select>
+                </div>
+                <div class="row select-box">
+                    <span>y_axis:&nbsp;</span>
+                    <select name="y select button" id="select_y"> y_axis: </select>
+                </div>
+                <div class="row alert alert-light">
+                    Hover on points to see the information!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="0856044.js"></script>
+</body>
+
+</html>
