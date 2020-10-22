@@ -1,24 +1,19 @@
-const MAX_WIDTH = 750;
-const MAX_HEIGHT = 700;
 const BACKGROUND = "#F8F9FA";
 const PALETTE = ["#a2d6f9", "#f4d35e", "#28afb0"];
 const LEGEND_WIDTH = 150;
 const LEGEND_HEIGHT = 90;
-const CSV_FILE = "http://vis.lab.djosix.com:2020/data/iris.csv";
-
-// reference
-// https://www.d3-graph-gallery.com/graph/parallel_custom.html
-
-// util functions
-function extractColumn(arr, column) {
-    return arr.map(r => r[column])
-}
 
 // set the dimensions and margins of the graph
-var margin = { top: 100, right: 100, bottom: 100, left: 100 },
-    width = MAX_WIDTH - margin.left - margin.right,
-    height = MAX_HEIGHT - margin.top - margin.bottom;
+var margin = {
+        top: 30,
+        right: 50,
+        bottom: 10,
+        left: 50
+    },
+    width = 460 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
 
+// append the svg object to the body of the page
 var svg = d3.select("#parallel_coordinates_plot")
     .append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -27,21 +22,18 @@ var svg = d3.select("#parallel_coordinates_plot")
     .attr("transform",
         "translate(" + margin.left + "," + margin.top + ")");
 
-// load the data
-d3.csv(CSV_FILE, data => {
-    if (data["class"] !== "") {
-        return {
-            // +: convert to number
-            sepal_length: +data["sepal length"],
-            sepal_width: +data["sepal width"],
-            petal_length: +data["petal length"],
-            petal_width: +data["petal width"],
-            class: data["class"]
-        };
-    }
-}).then(data => {
-    // attributes
-    let dimensions = ["sepal_length", "sepal_width", "petal_length", "petal_width"];
+$("#duplicate_alert").hide();
+
+// Parse the Data
+d3.csv("http://vis.lab.djosix.com:2020/data/iris.csv", data => {
+
+    // Color setting: plot three classes with different colors
+    let color = d3.scaleOrdinal()
+        .domain(["setosa", "versicolor", "virginica"])
+        .range([PALETTE[0], PALETTE[1], PALETTE[2]]);
+
+    // Here I set the list of dimension manually to control the order of axis:
+    dimensions = ["sepal length", "sepal width", "petal length", "petal width"]
 
     // add selection options
     d3.select("#select_axis_1")
@@ -49,33 +41,49 @@ d3.csv(CSV_FILE, data => {
         .data(dimensions)
         .enter()
         .append('option')
-        .text(d => { return d; }) // the text showed in the menu
-        .attr("value", d => { return d; }); // selected option
+        .text(d => {
+            return d;
+        }) // the text showed in the menu
+        .attr("value", d => {
+            return d;
+        }); // selected option
 
     d3.select("#select_axis_2")
         .selectAll("option")
         .data(dimensions)
         .enter()
         .append('option')
-        .text(d => { return d; })
-        .attr("value", d => { return d; });
+        .text(d => {
+            return d;
+        })
+        .attr("value", d => {
+            return d;
+        });
 
     d3.select("#select_axis_3")
         .selectAll("option")
         .data(dimensions)
         .enter()
         .append('option')
-        .text(d => { return d; }) // the text showed in the menu
-        .attr("value", d => { return d; }); // selected option
+        .text(d => {
+            return d;
+        }) // the text showed in the menu
+        .attr("value", d => {
+            return d;
+        }); // selected option
 
     d3.select("#select_axis_4")
         .selectAll("option")
         .data(dimensions)
         .enter()
         .append('option')
-        .text(d => { return d; })
-        .attr("value", d => { return d; });
-
+        .text(d => {
+            return d;
+        })
+        .attr("value", d => {
+            return d;
+        });
+    
     // default value and set the selector
     let selected_1 = dimensions[0],
         selected_2 = dimensions[1],
@@ -85,11 +93,6 @@ d3.csv(CSV_FILE, data => {
     d3.select("#select_axis_2").property("selectedIndex", 1);
     d3.select("#select_axis_3").property("selectedIndex", 2);
     d3.select("#select_axis_4").property("selectedIndex", 3);
-
-    // Color setting: plot three classes with different colors
-    let color = d3.scaleOrdinal()
-        .domain(["Iris-setosa", "Iris-versicolor", "Iris-virginica"])
-        .range([PALETTE[0], PALETTE[1], PALETTE[2]]);
 
     // legend
     let legendData = [
@@ -108,124 +111,131 @@ d3.csv(CSV_FILE, data => {
     let legendRect = legend.selectAll("g").data(legendData);
     let legendRectE = legendRect.enter()
         .append("g")
-        .attr("transform", (d, i) => { return "translate(0, " + (i * 20) + ")"; });
+        .attr("transform", (d, i) => {
+            return "translate(0, " + (i * 20) + ")";
+        });
     legendRectE
         .append("path")
-        .attr("d", d3.symbol().type(d => { return d[2] }))
-        .style("fill", d => { return d[1]; });
+        .attr("d", d3.symbol().type(d => {
+            return d[2]
+        }))
+        .style("fill", d => {
+            return d[1];
+        });
     legendRectE
         .append("text")
         .attr("x", 10)
         .attr("y", 5)
-        .text(d => { return d[0]; });
-
-    // tooltip
-    /*
-    let tool_tip = d3.tip()
-        .attr("class", "d3-tip")
-        .offset([-8, 0])
-        .html(d => {
-            return x_selected + ": " + d[x_selected] + "</br>" +
-                y_selected + ": " + d[y_selected] + "</br>" +
-                "class: " + d["class"];
+        .text(d => {
+            return d[0];
         });
-    svg.call(tool_tip);
-    */
-
+    
     // when the user selects an option, update
     d3.select("#select_axis_1")
         .on("change", d => {
             selected_1 = d3.select("#select_axis_1").node().value;
-            // plot();
         })
 
     d3.select("#select_axis_2")
         .on("change", d => {
             selected_2 = d3.select("#select_axis_2").node().value;
-            plot();
         })
 
     d3.select("#select_axis_3")
         .on("change", d => {
             selected_3 = d3.select("#select_axis_3").node().value;
-            plot();
         })
 
     d3.select("#select_axis_4")
         .on("change", d => {
             selected_4 = d3.select("#select_axis_4").node().value;
-            plot();
         })
+    
+    function hasDuplicates(array) {
+        return (new Set(array)).size !== array.length;
+    }
 
-    // Update the plot
-    function plot() {
+    d3.select("#btn_update")
+        .on("click", d => {
+            // check if the axes are all different
+            selected_dimensions = [selected_1, selected_2, selected_3, selected_4];
+            if (hasDuplicates(selected_dimensions)){
+                $("#duplicate_alert").show();
+            }
+            else{
+                $("#duplicate_alert").hide();
+                plot(selected_dimensions);
+            }
+        })
+    
+    function plot(selected_dimensions) {
         // remove the previous plot
-        svg.selectAll("myPath").remove();
-        svg.selectAll("yAxis").remove();
-        // svg.selectAll(".point").remove();
-        // svg.selectAll("text").remove();
-
-        selected_dimensions = [selected_1, selected_2, selected_3, selected_4];
+        svg.selectAll("*").remove();
 
         // build a linear scale for each dimension
-        let y = {};
-        let y_axis = {};
-        for (d in dimensions) {
-            name = dimensions[d]
-            dim_data = extractColumn(data, name);
+        var y = {}
+        for (i in selected_dimensions) {
+            name = selected_dimensions[i]
             y[name] = d3.scaleLinear()
-                .domain([0, 8])
-                // .domain([Math.floor(Math.min.apply(null, dim_data)) - 0.5, Math.ceil(Math.max.apply(null, dim_data)) + 0.5])
-                .range([height, 0]);
-            y_axis[name] = d3.axisLeft(y[name])
+                .domain([0, 8]) // --> Same axis range for each group
+                // .domain( [d3.extent(data, function(d) { return +d[name]; })] )
+                .range([height, 0])
         }
 
-        // build the X scale
+        // Build the X scale -> it find the best position for each Y axis
         x = d3.scalePoint()
             .range([0, width])
-            .domain(dimensions);
+            .domain(selected_dimensions);
 
-        // path: take a row of the csv as input, and return (x, y) coordinates of the line
+        // The path function take a row of the csv as input, and return x and y coordinates of the line to draw for this raw.
         function path(d) {
-            return d3.line()(dimensions.map(p => {
+            return d3.line()(selected_dimensions.map(function (p) {
                 return [x(p), y[p](d[p])];
             }));
         }
 
-        // draw the lines
+        // Draw the lines
         svg
             .selectAll("myPath")
             .data(data)
             .enter()
             .append("path")
-            .attr("class", d => {
+            .attr("class", function (d) {
+                console.log(d);
                 return "line " + d.class
-            }) // 'line' and the group name
+            }) // 2 class for each line: 'line' and the group name
             .attr("d", path)
             .style("fill", "none")
-            .style("stroke", d => {
-                return color(d.class)
+            .style("stroke", function (d) {
+                return (color(d.class))
             })
             .style("opacity", 0.5)
-            // .on("mouseover", highlight)
-            // .on("mouseleave", doNotHighlight)
+        // .on("mouseover", highlight)
+        // .on("mouseleave", doNotHighlight)
 
-        // draw the axis
-        svg.selectAll("yAxis")
-            .data(dimensions).enter()
+        // Draw the axis:
+        svg.selectAll("myAxis")
+            // For each dimension of the dataset I add a 'g' element:
+            .data(selected_dimensions).enter()
             .append("g")
             .attr("class", "axis")
-            .attr("transform", d => { return "translate(" + x(d) + ")"; })
-            // .each(d => { d3.select(this).call(d3.axisLeft(y['sepal_length'])) })
-            .call(d3.axisLeft(y['sepal_length']))
+            // translate this element to its right position on the x axis
+            .attr("transform", function (d) {
+                return "translate(" + x(d) + ")";
+            })
+            // build the axis with the call function
+            .each(function (d) {
+                d3.select(this).call(d3.axisLeft().ticks(5).scale(y[d]));
+            })
+            // ddd axis title
             .append("text")
             .style("text-anchor", "middle")
-            .attr("y", -15)
-            .attr("x", -18)
-            .text(function(d) { return d; })
+            .attr("y", -9)
+            .text(function (d) {
+                return d;
+            })
             .style("fill", "black")
-            .style("font-size", "13px")
     }
 
-    plot();
-});
+    plot(dimensions);
+})
