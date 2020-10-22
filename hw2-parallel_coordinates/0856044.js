@@ -44,7 +44,7 @@ d3.csv(CSV_FILE, data => {
     let dimensions = ["sepal_length", "sepal_width", "petal_length", "petal_width"];
 
     // add selection options
-    d3.select("#select_x")
+    d3.select("#select_axis_1")
         .selectAll("option")
         .data(dimensions)
         .enter()
@@ -52,7 +52,23 @@ d3.csv(CSV_FILE, data => {
         .text(d => { return d; }) // the text showed in the menu
         .attr("value", d => { return d; }); // selected option
 
-    d3.select("#select_y")
+    d3.select("#select_axis_2")
+        .selectAll("option")
+        .data(dimensions)
+        .enter()
+        .append('option')
+        .text(d => { return d; })
+        .attr("value", d => { return d; });
+
+    d3.select("#select_axis_3")
+        .selectAll("option")
+        .data(dimensions)
+        .enter()
+        .append('option')
+        .text(d => { return d; }) // the text showed in the menu
+        .attr("value", d => { return d; }); // selected option
+
+    d3.select("#select_axis_4")
         .selectAll("option")
         .data(dimensions)
         .enter()
@@ -61,10 +77,14 @@ d3.csv(CSV_FILE, data => {
         .attr("value", d => { return d; });
 
     // default value and set the selector
-    let x_selected = dimensions[0],
-        y_selected = dimensions[2];
-    d3.select("#select_x").property("selectedIndex", 0);
-    d3.select("#select_y").property("selectedIndex", 2);
+    let selected_1 = dimensions[0],
+        selected_2 = dimensions[1],
+        selected_3 = dimensions[2],
+        selected_4 = dimensions[3];
+    d3.select("#select_axis_1").property("selectedIndex", 0);
+    d3.select("#select_axis_2").property("selectedIndex", 1);
+    d3.select("#select_axis_3").property("selectedIndex", 2);
+    d3.select("#select_axis_4").property("selectedIndex", 3);
 
     // Color setting: plot three classes with different colors
     let color = d3.scaleOrdinal()
@@ -113,25 +133,39 @@ d3.csv(CSV_FILE, data => {
     */
 
     // when the user selects an option, update
-    d3.select("#select_x")
+    d3.select("#select_axis_1")
         .on("change", d => {
-            x_selected = d3.select("#select_x").node().value;
+            selected_1 = d3.select("#select_axis_1").node().value;
+            // plot();
+        })
+
+    d3.select("#select_axis_2")
+        .on("change", d => {
+            selected_2 = d3.select("#select_axis_2").node().value;
             plot();
         })
 
-    d3.select("#select_y")
+    d3.select("#select_axis_3")
         .on("change", d => {
-            y_selected = d3.select("#select_y").node().value;
+            selected_3 = d3.select("#select_axis_3").node().value;
+            plot();
+        })
+
+    d3.select("#select_axis_4")
+        .on("change", d => {
+            selected_4 = d3.select("#select_axis_4").node().value;
             plot();
         })
 
     // Update the plot
     function plot() {
         // remove the previous plot
-        // svg.selectAll("circle").remove();
-        // svg.selectAll("g").remove();
+        svg.selectAll("myPath").remove();
+        svg.selectAll("yAxis").remove();
         // svg.selectAll(".point").remove();
         // svg.selectAll("text").remove();
+
+        selected_dimensions = [selected_1, selected_2, selected_3, selected_4];
 
         // build a linear scale for each dimension
         let y = {};
@@ -150,7 +184,7 @@ d3.csv(CSV_FILE, data => {
         x = d3.scalePoint()
             .range([0, width])
             .domain(dimensions);
-        
+
         // path: take a row of the csv as input, and return (x, y) coordinates of the line
         function path(d) {
             return d3.line()(dimensions.map(p => {
@@ -173,8 +207,8 @@ d3.csv(CSV_FILE, data => {
                 return color(d.class)
             })
             .style("opacity", 0.5)
-        // .on("mouseover", highlight)
-        // .on("mouseleave", doNotHighlight)
+            // .on("mouseover", highlight)
+            // .on("mouseleave", doNotHighlight)
 
         // draw the axis
         svg.selectAll("yAxis")
