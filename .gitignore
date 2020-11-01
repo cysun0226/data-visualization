@@ -4,3 +4,9 @@ package.json
 *.DS_Store*
 d3.zip
 
+*node_modules/*
+package-lock.json
+package.json
+
+*/submit/*
+*.zip
