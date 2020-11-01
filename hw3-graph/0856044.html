@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Graph Visualization - Infect-Dublin</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+</head>
+
+<style>
+    .grid {
+        stroke: #9A8B7A;
+        stroke-width: 0.05px; fill: #CF7D1C;
+    } 
+    .arc {
+        stroke: #9A8B7A;
+        fill: none;
+    }
+    .node {    
+        fill: #EBD8C1;
+        stroke: #9A8B7A; 
+        stroke-width: 0.05px;
+    }
+    circle.active {
+        fill: #FE9922;
+    }
+    path.active {
+        stroke: #FE9922;
+    }
+    circle.source {
+        fill: #93C464;
+    }
+    circle.target {
+        fill: #41A368;
+    }
+    
+    h1 {
+        font-weight: bold;
+    }
+    
+    .alert {
+        /* margin-top: 5vh; */
+        /* padding: 5px; */
+    }
+    
+    #select_hint {
+        /* margin-bottom: 0; */
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+    
+    #hover_hint {
+        /* margin-top: 5vh; */
+        /* padding: 10px; */
+    }
+    
+    #btn_update {
+        margin-top: 2vh;
+        margin-bottom: 5vh;
+    }
+    
+    p {
+        width: 100%;
+    }
+    
+    ul {
+        padding: 5px;
+        margin: 0;
+    }
+</style>
+
+<body>
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <script src="https://d3js.org/d3-selection-multi.v0.4.min.js"></script>
+
+    <!-- jQuery and JS bundle w/ Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.5.1.js" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous">
+    </script>
+
+    <div class="container">
+        <div class="row plot-header">
+            <div class="col">
+                <h1 class="text-center">Graph Visualization - Infect-Dublin</h1>
+            </div>
+        </div>
+        <div class="row align-items-center">
+            <div class="col-6">
+                <h2>Node-link Diagram</h2>
+                <div id="node-link_div"></div>
+            </div>
+            <div class="col-6">
+                <h2>Adjacency Matrix</h2>
+                <div id="adj-matrix_div"></div>
+                <svg width="1000" height="1000"></svg>
+            </div>
+        </div>
+        <div class="row align-items-center alert alert-light">
+            <p class="text-center">Reference: https://www.d3-graph-gallery.com/graph/parallel_custom.html</p>
+        </div>
+    </div>
+
+</body>
+
+<script src="0856044.js"></script>
+
+</html>
