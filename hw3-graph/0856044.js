@@ -2,10 +2,10 @@
 var raw_data;
 var adjacency_matrix;
 const NODE_NUM = 410;
-const ADJ_MATRIX_WIDTH = 1000;
-const ADJ_MATRIX_HEIGHT = 1000;
-const LINK_NETWORK_WIDTH = 1000;
-const LINK_NETWORK_HEIGHT = 1000;
+const ADJ_MATRIX_WIDTH = 950;
+const ADJ_MATRIX_HEIGHT = 950;
+const LINK_NETWORK_WIDTH = 900;
+const LINK_NETWORK_HEIGHT = 950;
 const ADJ_BLOCK_SIZE = 2;
 
 
@@ -21,7 +21,7 @@ $.get('data/infect-dublin.edges',  // url
         let i = j = 0;
 
         for (let x = 1; x <=NODE_NUM; x++) {
-            nodes.push({id: String(x)});
+            nodes.push({id: String(x), group: 5});
         }
 
         while ((j = raw_data.indexOf(delimiter, i)) !== -1) {
@@ -34,7 +34,8 @@ $.get('data/infect-dublin.edges',  // url
             i = j + 1;
         }
 
-        createAdjacencyMatrix(nodes, edges);
+        // createAdjacencyMatrix(nodes, edges);
+        createNetworkGraph({nodes: nodes, links: edges})
 
         // console.log(raw_data);
 });
@@ -74,13 +75,14 @@ function createAdjacencyMatrix(nodes, edges) {
     // append the svg object to the body of the page
     var svg = d3.select("#adj-matrix_div")
         .append("svg")
+        .attr("id", "adj-matrix_svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
 
-    svg.selectAll("adj-block")
+    d3.select("#adj-matrix_svg")
         .append("g")
         .attr("transform", "translate(50,50)")
         .attr("id", "adjacencyG")
@@ -128,7 +130,7 @@ function createAdjacencyMatrix(nodes, edges) {
 
 };
 
-function createNetworkGraph(){
+function createNetworkGraph(graph){
     var margin = {
             top: 10,
             right: 10,
@@ -154,17 +156,15 @@ function createNetworkGraph(){
         }))
         .force("charge", d3.forceManyBody())
         .force("center", d3.forceCenter(width / 2, height / 2));
-
-    d3.json("data/miserables.json", function (error, graph) {
-        if (error) throw error;
-
+    
+    function networkGraph(graph) {
         var link = svg.append("g")
             .attr("class", "links")
             .selectAll("line")
             .data(graph.links)
             .enter().append("line")
             .attr("stroke-width", function (d) {
-                return Math.sqrt(d.value);
+                return Math.sqrt(d.weight)/2;
             });
 
         var node = svg.append("g")
@@ -222,7 +222,17 @@ function createNetworkGraph(){
                     return "translate(" + d.x + "," + d.y + ")";
                 })
         }
-    });
+    }
+
+    networkGraph(graph);
+
+    // d3.json("data/miserables.json", function (error, graph) {
+    //     if (error) throw error;
+
+    //     console.log(graph);
+
+    //     networkGraph(graph);
+    // });
 
     function dragstarted(d) {
         if (!d3.event.active) simulation.alphaTarget(0.3).restart();
