@@ -10,26 +10,33 @@
 <style>
     .grid {
         stroke: #9A8B7A;
-        stroke-width: 0.05px; fill: #CF7D1C;
-    } 
+        stroke-width: 0.05px;
+        fill: #CF7D1C;
+    }
+    
     .arc {
         stroke: #9A8B7A;
         fill: none;
     }
-    .node {    
+    
+    .node {
         fill: #EBD8C1;
-        stroke: #9A8B7A; 
+        stroke: #9A8B7A;
         stroke-width: 0.05px;
     }
+    
     circle.active {
         fill: #FE9922;
     }
+    
     path.active {
         stroke: #FE9922;
     }
+    
     circle.source {
         fill: #93C464;
     }
+    
     circle.target {
         fill: #41A368;
     }
@@ -67,27 +74,27 @@
         padding: 5px;
         margin: 0;
     }
-
+    
     .links line {
         stroke: #999;
         stroke-opacity: 0.6;
     }
-
+    
     .nodes circle {
         stroke: #fff;
         stroke-width: 1.5px;
     }
-
+    
     text {
         font-family: sans-serif;
         font-size: 10px;
     }
-
 </style>
 
 <body>
     <script src="https://d3js.org/d3.v4.js"></script>
     <script src="https://d3js.org/d3-selection-multi.v0.4.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.js"></script>
 
     <!-- jQuery and JS bundle w/ Popper.js -->
     <script src="https://code.jquery.com/jquery-3.5.1.js" crossorigin="anonymous">
