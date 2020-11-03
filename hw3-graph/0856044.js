@@ -6,6 +6,7 @@ const ADJ_MATRIX_HEIGHT = 950;
 const LINK_NETWORK_WIDTH = 900;
 const LINK_NETWORK_HEIGHT = 950;
 const ADJ_BLOCK_SIZE = 2;
+const LINK_WIDTH = 1;
 
 var weight_max = 0;
 
@@ -17,6 +18,7 @@ $.get('data/infect-dublin.edges', // url
 
         let nodes = [];
         let edges = [];
+        let edges_matrix = [];
         let weights = {};
 
         for (let x = 1; x <= NODE_NUM; x++) {
@@ -31,7 +33,8 @@ $.get('data/infect-dublin.edges', // url
             weights[line[1]]++;
             weights[line[0]]++;
 
-            // edges.push({ source: line[1], target: line[0], weight: 5 })
+            edges_matrix.push({ source: line[1], target: line[0], weight: 5 })
+            edges_matrix.push({ source: line[0], target: line[1], weight: 5 })
             edges.push({ source: line[0], target: line[1], weight: 5 })
 
             i = j + 1;
@@ -43,13 +46,18 @@ $.get('data/infect-dublin.edges', // url
 
         // Find the maximal value of the weight
         let arr = Object.values(weights);
-        weight_max = Math.max(...arr);
+        weight_max = Math.max(...arr) * 1.25;
 
-        // createAdjacencyMatrix(nodes, edges);
+        // createAdjacencyMatrix(nodes, edges_matrix);
         createNetworkGraph({ nodes: nodes, links: edges })
 
         // console.log(raw_data);
     });
+
+function gridOver(d) {
+    console.log(d)
+    d3.selectAll("rect").style("stroke-width", function(p) { return p.x == d.x || p.y == d.y ? "0.5px" : "0.01px" });
+};
 
 function createAdjacencyMatrix(nodes, edges) {
 
@@ -108,7 +116,7 @@ function createAdjacencyMatrix(nodes, edges) {
         .attr("y", d => d.y * ADJ_BLOCK_SIZE)
         .style("fill-opacity", d => d.weight * .2)
 
-    /*
+
     d3.select("svg")
         .append("g")
         .attr("transform", "translate(50,45)")
@@ -116,7 +124,7 @@ function createAdjacencyMatrix(nodes, edges) {
         .data(nodes)
         .enter()
         .append("text")
-        .attr("x", (d, i) => i * ADJ_BLOCK_SIZE + (ADJ_BLOCK_SIZE/2))
+        .attr("x", (d, i) => i * ADJ_BLOCK_SIZE + (ADJ_BLOCK_SIZE / 2))
         .text(d => d.id)
         .style("text-anchor", "middle")
         .style("font-size", "0.01px")
@@ -127,17 +135,13 @@ function createAdjacencyMatrix(nodes, edges) {
         .data(nodes)
         .enter()
         .append("text")
-        .attr("y", (d, i) => i * ADJ_BLOCK_SIZE + (ADJ_BLOCK_SIZE/2))
+        .attr("y", (d, i) => i * ADJ_BLOCK_SIZE + (ADJ_BLOCK_SIZE / 2))
         .text(d => d.id)
         .style("text-anchor", "end")
-        .style("font-size", "10px")
-    */
+        .style("font-size", "0.01px")
 
-    // d3.selectAll("rect.grid").on("mouseover", gridOver);
 
-    function gridOver(d) {
-        d3.selectAll("rect").style("stroke-width", function(p) { return p.x == d.x || p.y == d.y ? "0.5px" : "0.25px" });
-    };
+    d3.selectAll("rect.grid").on("mouseover", gridOver);
 
 };
 
@@ -176,7 +180,7 @@ function createNetworkGraph(graph) {
             .data(graph.links)
             .enter().append("line")
             .attr("stroke-width", function(d) {
-                return Math.sqrt(d.weight) / 2;
+                return LINK_WIDTH;
             });
 
         var node = svg.append("g")
@@ -184,11 +188,15 @@ function createNetworkGraph(graph) {
             .selectAll("g")
             .data(graph.nodes)
             .enter().append("g")
+            .on("mouseover", node_mouseover)
+            .on("mouseout", node_mouseout)
 
         var circles = node.append("circle")
             .attr("r", 5)
+            // .attr("stroke", "#a9b2b8")
+            // .attr("stroke-width", 0.5)
             .attr("fill", function(d) {
-                return color(d.group / weight_max);
+                return color((d.group / weight_max) + 0.15);
             })
             .call(d3.drag()
                 .on("start", dragstarted)
@@ -206,6 +214,49 @@ function createNetworkGraph(graph) {
             .text(function(d) {
                 return d.id;
             });
+
+        function node_mouseover(d) {
+            // alert("mouse over on the node")
+            // id: "32", group: 1, index: 31
+            link.style('stroke', l => {
+                if (l.source.id == d.id || l.target.id == d.id) {
+                    return "#212f3d";
+                } else {
+                    return "#999";
+                }
+            });
+
+            link.style('stroke-width', l => {
+                if (l.source.id == d.id || l.target.id == d.id) {
+                    return LINK_WIDTH * 3;
+                } else {
+                    return LINK_WIDTH;
+                }
+            });
+
+            d3.select(this).select("circle").transition()
+                .duration(250)
+                .attr("r", 12)
+                .attr("fill", "#f6f63c");
+            console.log(this);
+            console.log("mouse over on the node")
+            console.log(d)
+        }
+
+        function node_mouseout(d) {
+            // id: "32", group: 1, index: 31
+            // alert("mouse out the node")
+            d3.select(this).select("circle").transition()
+                .duration(750)
+                .attr("r", 5)
+                .attr("fill", color((d.group / weight_max) + 0.15));
+            console.log("mouse out the node")
+            console.log(d)
+
+            link.style('stroke', l => { return "#999"; });
+
+            link.style('stroke-width', l => { return LINK_WIDTH; });
+        }
 
         simulation
             .nodes(graph.nodes)
