@@ -48,14 +48,15 @@ $.get('data/infect-dublin.edges', // url
         let arr = Object.values(weights);
         weight_max = Math.max(...arr) * 1.25;
 
-        // createAdjacencyMatrix(nodes, edges_matrix);
+        createAdjacencyMatrix(nodes, edges_matrix);
         createNetworkGraph({ nodes: nodes, links: edges })
 
         // console.log(raw_data);
     });
 
 function gridOver(d) {
-    console.log(d)
+    // console.log(d)
+    //  id: "77-384", x: 383, y: 76, weight: 0 }
     d3.selectAll("rect").style("stroke-width", function(p) { return p.x == d.x || p.y == d.y ? "0.5px" : "0.01px" });
 };
 
@@ -116,7 +117,7 @@ function createAdjacencyMatrix(nodes, edges) {
         .attr("y", d => d.y * ADJ_BLOCK_SIZE)
         .style("fill-opacity", d => d.weight * .2)
 
-
+    /*
     d3.select("svg")
         .append("g")
         .attr("transform", "translate(50,45)")
@@ -127,7 +128,7 @@ function createAdjacencyMatrix(nodes, edges) {
         .attr("x", (d, i) => i * ADJ_BLOCK_SIZE + (ADJ_BLOCK_SIZE / 2))
         .text(d => d.id)
         .style("text-anchor", "middle")
-        .style("font-size", "0.01px")
+        .style("font-size", "2px")
 
     d3.select("svg")
         .append("g").attr("transform", "translate(45,50)")
@@ -138,8 +139,8 @@ function createAdjacencyMatrix(nodes, edges) {
         .attr("y", (d, i) => i * ADJ_BLOCK_SIZE + (ADJ_BLOCK_SIZE / 2))
         .text(d => d.id)
         .style("text-anchor", "end")
-        .style("font-size", "0.01px")
-
+        .style("font-size", "2px")
+    */
 
     d3.selectAll("rect.grid").on("mouseover", gridOver);
 
@@ -218,6 +219,9 @@ function createNetworkGraph(graph) {
         function node_mouseover(d) {
             // alert("mouse over on the node")
             // id: "32", group: 1, index: 31
+
+            gridOver({ id: d.id + '-' + d.id, x: parseInt(d.id) - 1, y: parseInt(d.id) - 1, weight: 0 })
+
             link.style('stroke', l => {
                 if (l.source.id == d.id || l.target.id == d.id) {
                     return "#212f3d";
@@ -238,9 +242,6 @@ function createNetworkGraph(graph) {
                 .duration(250)
                 .attr("r", 12)
                 .attr("fill", "#f6f63c");
-            console.log(this);
-            console.log("mouse over on the node")
-            console.log(d)
         }
 
         function node_mouseout(d) {
@@ -250,11 +251,8 @@ function createNetworkGraph(graph) {
                 .duration(750)
                 .attr("r", 5)
                 .attr("fill", color((d.group / weight_max) + 0.15));
-            console.log("mouse out the node")
-            console.log(d)
 
             link.style('stroke', l => { return "#999"; });
-
             link.style('stroke-width', l => { return LINK_WIDTH; });
         }
 
