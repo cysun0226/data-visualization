@@ -1,14 +1,16 @@
 var raw_data;
 var adjacency_matrix;
 const NODE_NUM = 410;
-const ADJ_MATRIX_WIDTH = 950;
-const ADJ_MATRIX_HEIGHT = 950;
-const LINK_NETWORK_WIDTH = 900;
-const LINK_NETWORK_HEIGHT = 950;
+const ADJ_MATRIX_WIDTH = 850;
+const ADJ_MATRIX_HEIGHT = 850;
+const LINK_NETWORK_WIDTH = 850;
+const LINK_NETWORK_HEIGHT = 850;
 const ADJ_BLOCK_SIZE = 2;
 const LINK_WIDTH = 1;
 
 var weight_max = 0;
+var hover_ciriles = [];
+var color;
 
 $.get('data/infect-dublin.edges', // url
     function(data, textStatus, jqXHR) { // success callback
@@ -48,16 +50,35 @@ $.get('data/infect-dublin.edges', // url
         let arr = Object.values(weights);
         weight_max = Math.max(...arr) * 1.25;
 
-        createAdjacencyMatrix(nodes, edges_matrix);
+        // createAdjacencyMatrix(nodes, edges_matrix);
         createNetworkGraph({ nodes: nodes, links: edges })
 
         // console.log(raw_data);
     });
 
-function gridOver(d) {
+function gridOver(d, call_by) {
     // console.log(d)
+
+    d3.selectAll("text").style("font-size", t => {
+        if (!("axis" in t)) {
+            return "12px";
+        } else if ((t.axis == "x" && t.id == d.x + 1) || (t.axis == "y" && t.id == d.y + 1)) {
+            return "12px";
+        } else {
+            return "0px";
+        }
+    })
+
     //  id: "77-384", x: 383, y: 76, weight: 0 }
     d3.selectAll("rect").style("stroke-width", function(p) { return p.x == d.x || p.y == d.y ? "0.5px" : "0.01px" });
+
+    // hightlight the circle
+    if (call_by != "network") {
+        node_mouseover(d3.select("#circle-" + String(d.x + 1)))
+        node_mouseover(d3.select("#circle-" + String(d.y + 1)))
+    }
+
+    // d3.selectAll("circle").
 };
 
 function createAdjacencyMatrix(nodes, edges) {
@@ -117,34 +138,86 @@ function createAdjacencyMatrix(nodes, edges) {
         .attr("y", d => d.y * ADJ_BLOCK_SIZE)
         .style("fill-opacity", d => d.weight * .2)
 
-    /*
+    let nodes_x = [],
+        nodes_y = [];
+    for (let i = 0; i < NODE_NUM; i++) {
+        nodes_x.push({ id: nodes[i].id, group: nodes[i].group, axis: "x" });
+        nodes_y.push({ id: nodes[i].id, group: nodes[i].group, axis: "y" });
+    }
+
     d3.select("svg")
         .append("g")
         .attr("transform", "translate(50,45)")
         .selectAll("text")
-        .data(nodes)
+        .data(nodes_x)
         .enter()
         .append("text")
         .attr("x", (d, i) => i * ADJ_BLOCK_SIZE + (ADJ_BLOCK_SIZE / 2))
         .text(d => d.id)
         .style("text-anchor", "middle")
-        .style("font-size", "2px")
+        .style("font-size", "0px")
 
     d3.select("svg")
         .append("g").attr("transform", "translate(45,50)")
         .selectAll("text")
-        .data(nodes)
+        .data(nodes_y)
         .enter()
         .append("text")
-        .attr("y", (d, i) => i * ADJ_BLOCK_SIZE + (ADJ_BLOCK_SIZE / 2))
+        .attr("y", (d, i) => i * ADJ_BLOCK_SIZE + (ADJ_BLOCK_SIZE / 2) + 5)
         .text(d => d.id)
         .style("text-anchor", "end")
-        .style("font-size", "2px")
-    */
+        .style("font-size", "0px")
 
-    d3.selectAll("rect.grid").on("mouseover", gridOver);
+    d3.selectAll("rect.grid").on("mouseover", d => { gridOver(d, call_by = "matrix") });
 
 };
+
+var link;
+
+function node_mouseover(d, call_by) {
+    // alert("mouse over on the node")
+    // id: "32", group: 1, index: 31
+    // console.log(d)
+
+    link.style('stroke', l => {
+        if (l.source.id == d.id || l.target.id == d.id) {
+            return "#212f3d";
+        } else {
+            return "#999";
+        }
+    });
+
+    link.style('stroke-width', l => {
+        if (l.source.id == d.id || l.target.id == d.id) {
+            return LINK_WIDTH * 3;
+        } else {
+            return LINK_WIDTH;
+        }
+    });
+
+    d3.select("#circle-" + String(d.id)).transition()
+        .duration(250)
+        .attr("r", 12)
+        .attr("fill", "#f6f63c");
+
+    hover_cirile = this;
+
+    if (call_by != "matrix") {
+        gridOver({ id: d.id + '-' + d.id, x: parseInt(d.id) - 1, y: parseInt(d.id) - 1, weight: 0 }, call_by = "network")
+    }
+}
+
+function node_mouseout(d) {
+    // id: "32", group: 1, index: 31
+    // alert("mouse out the node")
+    d3.select("#circle-" + String(d.id)).transition()
+        .duration(200)
+        .attr("r", 5)
+        .attr("fill", color((d.group / weight_max) + 0.15));
+
+    link.style('stroke', l => { return "#999"; });
+    link.style('stroke-width', l => { return LINK_WIDTH; });
+}
 
 function createNetworkGraph(graph) {
     var margin = {
@@ -165,7 +238,7 @@ function createNetworkGraph(graph) {
             "translate(" + margin.left + "," + margin.top + ")");
 
     // var color = d3.interpolateViridis;
-    var color = d3.interpolateBlues;
+    color = d3.interpolateBlues;
 
     var simulation = d3.forceSimulation()
         .force("link", d3.forceLink().id(function(d) {
@@ -175,7 +248,7 @@ function createNetworkGraph(graph) {
         .force("center", d3.forceCenter(width / 2, height / 2));
 
     function networkGraph(graph) {
-        var link = svg.append("g")
+        link = svg.append("g")
             .attr("class", "links")
             .selectAll("line")
             .data(graph.links)
@@ -189,13 +262,11 @@ function createNetworkGraph(graph) {
             .selectAll("g")
             .data(graph.nodes)
             .enter().append("g")
-            .on("mouseover", node_mouseover)
+            .on("mouseover", d => { node_mouseover(d, call_by = "network") })
             .on("mouseout", node_mouseout)
 
         var circles = node.append("circle")
             .attr("r", 5)
-            // .attr("stroke", "#a9b2b8")
-            // .attr("stroke-width", 0.5)
             .attr("fill", function(d) {
                 return color((d.group / weight_max) + 0.15);
             })
@@ -203,6 +274,9 @@ function createNetworkGraph(graph) {
                 .on("start", dragstarted)
                 .on("drag", dragged)
                 .on("end", dragended));
+
+        // assign id to the circle
+        d3.selectAll("circle").attr("id", d => { return "circle-" + String(d.id) })
 
         var lables = node.append("text")
             .text(function(d) {
@@ -215,46 +289,6 @@ function createNetworkGraph(graph) {
             .text(function(d) {
                 return d.id;
             });
-
-        function node_mouseover(d) {
-            // alert("mouse over on the node")
-            // id: "32", group: 1, index: 31
-
-            gridOver({ id: d.id + '-' + d.id, x: parseInt(d.id) - 1, y: parseInt(d.id) - 1, weight: 0 })
-
-            link.style('stroke', l => {
-                if (l.source.id == d.id || l.target.id == d.id) {
-                    return "#212f3d";
-                } else {
-                    return "#999";
-                }
-            });
-
-            link.style('stroke-width', l => {
-                if (l.source.id == d.id || l.target.id == d.id) {
-                    return LINK_WIDTH * 3;
-                } else {
-                    return LINK_WIDTH;
-                }
-            });
-
-            d3.select(this).select("circle").transition()
-                .duration(250)
-                .attr("r", 12)
-                .attr("fill", "#f6f63c");
-        }
-
-        function node_mouseout(d) {
-            // id: "32", group: 1, index: 31
-            // alert("mouse out the node")
-            d3.select(this).select("circle").transition()
-                .duration(750)
-                .attr("r", 5)
-                .attr("fill", color((d.group / weight_max) + 0.15));
-
-            link.style('stroke', l => { return "#999"; });
-            link.style('stroke-width', l => { return LINK_WIDTH; });
-        }
 
         simulation
             .nodes(graph.nodes)
