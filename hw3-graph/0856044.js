@@ -4,7 +4,7 @@ const NODE_NUM = 410;
 const ADJ_MATRIX_WIDTH = 850;
 const ADJ_MATRIX_HEIGHT = 850;
 const LINK_NETWORK_WIDTH = 850;
-const LINK_NETWORK_HEIGHT = 850;
+const LINK_NETWORK_HEIGHT = 725;
 const ADJ_BLOCK_SIZE = 2;
 const LINK_WIDTH = 1;
 
@@ -12,7 +12,14 @@ var weight_max = 0;
 var hover_ciriles = [];
 var color;
 
-$.get('data/infect-dublin.edges', // url
+const DATA_URL = "http://vis.lab.djosix.com:2020/data/infect-dublin.edges";
+
+function hideLoading(id) {
+    let x = document.getElementById(id);
+    x.style.display = "none";
+}
+
+$.get(DATA_URL, // url
     function(data, textStatus, jqXHR) { // success callback
         // alert('status: ' + textStatus + ', data:' + data);
         raw_data = data;
@@ -198,6 +205,8 @@ function createAdjacencyMatrix(nodes, edges) {
     d3.selectAll("rect.grid").on("mouseover", d => { gridOver(d, call_by = "matrix") });
     d3.selectAll("rect.grid").on("mouseout", gridOut);
 
+    // hideLoading("adjmat-loader-div");
+    hideLoading("adjmat-loader");
 };
 
 var link;
@@ -292,7 +301,7 @@ function createNetworkGraph(graph) {
             return d.id;
         }))
         .force("charge", d3.forceManyBody().strength(-7))
-        .force("center", d3.forceCenter(width / 2, height / 2));
+        .force("center", d3.forceCenter(width / 2, height / 2 + 50));
 
     function networkGraph(graph) {
         link = svg.append("g")
@@ -366,17 +375,12 @@ function createNetworkGraph(graph) {
                     return "translate(" + d.x + "," + d.y + ")";
                 })
         }
+
+        // hideLoading("network-loader-div");
+        hideLoading("network-loader");
     }
 
     networkGraph(graph);
-
-    // d3.json("data/miserables.json", function (error, graph) {
-    //     if (error) throw error;
-
-    //     console.log(graph);
-
-    //     networkGraph(graph);
-    // });
 
     function dragstarted(d) {
         if (!d3.event.active) simulation.alphaTarget(0.3).restart();

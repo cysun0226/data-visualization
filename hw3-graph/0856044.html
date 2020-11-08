@@ -43,6 +43,8 @@
     
     h1 {
         font-weight: bold;
+        margin-top: 2vh;
+        margin-bottom: 1.5vh;
     }
     
     .alert {
@@ -89,6 +91,41 @@
         font-family: sans-serif;
         font-size: 10px;
     }
+    
+    .loader {
+        border: 16px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 16px solid #3498db;
+        width: 120px;
+        height: 120px;
+        -webkit-animation: spin 2s linear infinite;
+        /* Safari */
+        animation: spin 2s linear infinite;
+    }
+    
+    .loader-div {
+        width: 750px;
+        height: 750px;
+    }
+    /* Safari */
+    
+    @-webkit-keyframes spin {
+        0% {
+            -webkit-transform: rotate(0deg);
+        }
+        100% {
+            -webkit-transform: rotate(360deg);
+        }
+    }
+    
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
 </style>
 
 <body>
@@ -109,23 +146,44 @@
             </div>
         </div>
         <div class="row align-items-center">
-            <div class="col-6">
-                <!-- <h2>Node-link Diagram</h2> -->
+            <div class="col-6 ">
+                <div id="network-loader" class="loader align-items-center"></div>
                 <div id="node-link_div"></div>
+                <div class="row align-items-center alert alert-light" style="color: black">
+                    <h4 style="width: 100%; font-weight: bold;">Manual</h4>
+                    <ul>
+                        <li>Please wait for loading the node-link diagram and adjaceny matrix.</li>
+                        <li>Hover on nodes to highlight the corresponding edges & matrix grids. You can also move the nodes by dragging them.
+                        </li>
+                        <li>Hover on matrix grids to highlight the corresponding row/column & node-edges.
+                        </li>
+                        <li>The label of the matrix row/column will be shown when it is highlighted.
+                        </li>
+                        <li>The hover effects may be slow. Please be patient.
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <div class="col-6">
-                <!-- <h2>Adjacency Matrix</h2> -->
+            <div class="col-6 ">
+                <div id="adjmat-loader" class="loader align-items-center"></div>
                 <div id="adj-matrix_div"></div>
+                <div class="row align-items-center alert alert-light " style="margin-left: 0vw ">
+                    <h6 style="width: 100%; margin-bottom: 0px; ">Reference</h6>
+                    <ul style="font-size: small; ">
+                        <li>
+                            https://bl.ocks.org/KingOfCramers/32bbcd8c360e6d8aa0d5b7a50725fe73
+                        </li>
+                        <li>
+                            https://bl.ocks.org/heybignick/3faf257bbbbc7743bb72310d03b86ee8
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
-        <div class="row align-items-center alert alert-light">
-            <p class="text-center">Reference: https://bl.ocks.org/KingOfCramers/32bbcd8c360e6d8aa0d5b7a50725fe73</p>
-            <p class="text-center">Reference: https://bl.ocks.org/heybignick/3faf257bbbbc7743bb72310d03b86ee8</p>
         </div>
     </div>
 
 </body>
 
-<script src="0856044.js"></script>
+<script src="0856044.js "></script>
 
 </html>
