@@ -44,7 +44,7 @@
     h1 {
         font-weight: bold;
         margin-top: 2vh;
-        margin-bottom: 1.5vh;
+        margin-bottom: 1vh;
     }
     
     .alert {
@@ -93,6 +93,14 @@
     }
     
     .loader {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 200px;
+        margin-bottom: 200px;
+        left: 50%;
+        top: 50%;
+        z-index: 1;
         border: 16px solid #f3f3f3;
         border-radius: 50%;
         border-top: 16px solid #3498db;
@@ -146,7 +154,7 @@
             </div>
         </div>
         <div class="row align-items-center">
-            <div class="col-6 ">
+            <div class="col-6 row align-items-center justify-content-center" style="width: 100%;">
                 <div id="network-loader" class="loader align-items-center"></div>
                 <div id="node-link_div"></div>
                 <div class="row align-items-center alert alert-light" style="color: black">
@@ -164,10 +172,10 @@
                     </ul>
                 </div>
             </div>
-            <div class="col-6 ">
+            <div class="col-6 row align-items-center justify-content-center" style="width: 100%;">
                 <div id="adjmat-loader" class="loader align-items-center"></div>
-                <div id="adj-matrix_div"></div>
-                <div class="row align-items-center alert alert-light " style="margin-left: 0vw ">
+                <div id="adj-matrix_div" style="width: 100%;"></div>
+                <div class="row alert alert-light " style="margin-left: 0vw ">
                     <h6 style="width: 100%; margin-bottom: 0px; ">Reference</h6>
                     <ul style="font-size: small; ">
                         <li>
