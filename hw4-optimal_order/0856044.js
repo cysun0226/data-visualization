@@ -110,16 +110,18 @@ function gridOut(d) {
         }
     })
 
-    //  id: "77-384", x: 383, y: 76, weight: 0 }
     d3.selectAll("rect").style("stroke-width", p => { return "0.01px"; });
 
+    let id_y = parseInt(d.id.split('-')[0]);
+    let id_x = parseInt(d.id.split('-')[1]);
+
     // un-hightlight the circle
-    let x_group = d3.select("#circle-" + String(d.x + 1)).attr("group")
-    let y_group = d3.select("#circle-" + String(d.y + 1)).attr("group")
+    let x_group = d3.select("#circle-" + id_x).attr("group")
+    let y_group = d3.select("#circle-" + id_y).attr("group")
 
     if (call_by != "network") {
-        node_mouseout({ id: String(d.x + 1), group: x_group }, "matrix");
-        node_mouseout({ id: String(d.y + 1), group: y_group }, "matrix");
+        node_mouseout({ id: id_x, group: x_group }, "matrix");
+        node_mouseout({ id: id_y, group: y_group }, "matrix");
     }
 
     // d3.selectAll("circle").
