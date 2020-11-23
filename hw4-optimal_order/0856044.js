@@ -13,8 +13,7 @@ var hover_ciriles = [];
 var color;
 var order;
 
-// const DATA_URL = "http://vis.lab.djosix.com:2020/data/infect-dublin.edges";
-const DATA_URL = "data/infect-dublin.edges";
+const DATA_URL = "http://vis.lab.djosix.com:2020/data/infect-dublin.edges";
 
 function hideLoading(id) {
     let x = document.getElementById(id);
