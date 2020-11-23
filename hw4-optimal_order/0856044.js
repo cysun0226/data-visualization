@@ -59,32 +59,41 @@ $.get(DATA_URL, // url
         weight_max = Math.max(...arr) * 1.25;
 
         createAdjacencyMatrix(nodes, edges_matrix);
-        createNetworkGraph({ nodes: nodes, links: edges })
+        createNetworkGraph({ nodes: nodes, links: edges });
 
         // console.log(raw_data);
     });
 
 function gridOver(d, call_by) {
     console.log(d)
-    console.log(call_by)
+
+    let grid_y = parseInt(d.id.split('-')[0]);
+    let grid_x = parseInt(d.id.split('-')[1]);
+
+    console.log("grid_x, grid_y")
+    console.log(grid_x + " " + grid_y)
 
     d3.selectAll("text").style("font-size", t => {
         if (!("axis" in t)) {
             return "10px";
-        } else if ((t.axis == "x" && t.id == d.x + 1) || (t.axis == "y" && t.id == d.y + 1)) {
+            // } else if ((t.axis == "x" && t.id == d.x + 1) || (t.axis == "y" && t.id == d.y + 1)) {
+        } else if ((t.axis == "x" && t.id == grid_x) || (t.axis == "y" && t.id == grid_y)) {
             return "12px";
         } else {
             return "0px";
         }
     })
 
-    //  id: "77-384", x: 383, y: 76, weight: 0 }
+    // d3.selectAll("rect").style("stroke-width", function(p) { return p.x == d.x || p.y == d.y ? "0.5px" : "0.01px" });
     d3.selectAll("rect").style("stroke-width", function(p) { return p.x == d.x || p.y == d.y ? "0.5px" : "0.01px" });
 
     // hightlight the circle
     if (call_by != "network") {
-        node_mouseover({ id: String(d.x + 1) }, "matrix");
-        node_mouseover({ id: String(d.y + 1), prev_id: String(d.x + 1) }, "matrix");
+        // node_mouseover({ id: String(d.x + 1) }, "matrix");
+        // node_mouseover({ id: String(d.y + 1), prev_id: String(d.x + 1) }, "matrix");
+
+        node_mouseover({ id: String(grid_x) }, "matrix");
+        node_mouseover({ id: String(grid_y), prev_id: String(grid_x) }, "matrix");
     }
 
     // d3.selectAll("circle").
@@ -135,9 +144,6 @@ function createAdjacencyMatrix(nodes, edges) {
         adjacency[parseInt(edge.source) - 1][parseInt(edge.target) - 1]++;
     })
 
-    console.log("adjacency")
-    console.log(adjacency)
-
     // compute the leaforder
     var leafOrder = reorder.optimal_leaf_order()
         .distance(science.stats.distance.manhattan);
@@ -177,8 +183,8 @@ function createAdjacencyMatrix(nodes, edges) {
     })
     */
 
-    console.log("matrix")
-    console.log(matrix)
+    // console.log("matrix")
+    // console.log(matrix)
 
     // set the dimensions and margins of the graph
     var margin = {
@@ -227,6 +233,11 @@ function createAdjacencyMatrix(nodes, edges) {
         nodes_y.push({ id: String(id + 1), group: nodes[id].group, axis: "y" });
     })
 
+    console.log("nodes_x")
+    console.log(nodes_x)
+    console.log("nodes_y")
+    console.log(nodes_y)
+
     d3.select("svg")
         .append("g")
         .attr("transform", "translate(50,45)")
@@ -235,6 +246,8 @@ function createAdjacencyMatrix(nodes, edges) {
         .enter()
         .append("text")
         .attr("x", (d, i) => i * ADJ_BLOCK_SIZE + (ADJ_BLOCK_SIZE / 2))
+        .attr("id", d => d.id)
+        .attr("axis", "x")
         .text(d => d.id)
         .style("text-anchor", "middle")
         .style("font-size", "0px")
@@ -246,6 +259,8 @@ function createAdjacencyMatrix(nodes, edges) {
         .enter()
         .append("text")
         .attr("y", (d, i) => i * ADJ_BLOCK_SIZE + (ADJ_BLOCK_SIZE / 2) + 5)
+        .attr("id", d => d.id)
+        .attr("axis", "y")
         .text(d => d.id)
         .style("text-anchor", "end")
         .style("font-size", "0px")
