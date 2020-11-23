@@ -11,6 +11,7 @@ const LINK_WIDTH = 1;
 var weight_max = 0;
 var hover_ciriles = [];
 var color;
+var order;
 
 // const DATA_URL = "http://vis.lab.djosix.com:2020/data/infect-dublin.edges";
 const DATA_URL = "data/infect-dublin.edges";
@@ -150,7 +151,7 @@ function createAdjacencyMatrix(nodes, edges) {
     var leafOrder = reorder.optimal_leaf_order()
         .distance(science.stats.distance.manhattan);
 
-    var order = leafOrder(adjacency);
+    order = leafOrder(adjacency);
 
     console.log("order");
     console.log(order);
@@ -320,7 +321,12 @@ function node_mouseover(d, call_by) {
         .attr("fill", "#f6f63c");
 
     if (call_by != "matrix") {
-        gridOver({ id: d.id + '-' + d.id, x: parseInt(d.id) - 1, y: parseInt(d.id) - 1, weight: 0 }, call_by = "network")
+        let grid_index = order.indexOf(parseInt(d.id) - 1);
+        console.log("d.id")
+        console.log(d.id)
+        console.log("grid_index")
+        console.log(grid_index)
+        gridOver({ id: d.id + '-' + d.id, x: grid_index, y: grid_index, weight: 0 }, call_by = "network")
     }
 }
 
