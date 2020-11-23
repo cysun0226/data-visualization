@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Graph Visualization - Infect-Dublin</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+</head>
+
+<style>
+    .grid {
+        stroke: #9A8B7A;
+        stroke-width: 0.05px;
+        fill: #2471a3
+    }
+    
+    .arc {
+        stroke: #9A8B7A;
+        fill: none;
+    }
+    
+    .node {
+        fill: #EBD8C1;
+        stroke: #9A8B7A;
+        stroke-width: 0.05px;
+    }
+    
+    circle.active {
+        fill: #1565c0;
+    }
+    
+    path.active {
+        stroke: #1565c0;
+    }
+    
+    circle.source {
+        fill: #93C464;
+    }
+    
+    circle.target {
+        fill: #41A368;
+    }
+    
+    h1 {
+        font-weight: bold;
+        margin-top: 2vh;
+        margin-bottom: 1vh;
+    }
+    
+    .alert {
+        /* margin-top: 5vh; */
+        /* padding: 5px; */
+    }
+    
+    #select_hint {
+        /* margin-bottom: 0; */
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+    
+    #hover_hint {
+        /* margin-top: 5vh; */
+        /* padding: 10px; */
+    }
+    
+    #btn_update {
+        margin-top: 2vh;
+        margin-bottom: 5vh;
+    }
+    
+    p {
+        width: 100%;
+    }
+    
+    ul {
+        padding: 5px;
+        margin: 0;
+    }
+    
+    .links line {
+        stroke: #999;
+        stroke-opacity: 0.6;
+    }
+    
+    .nodes circle {
+        stroke: #FFF;
+        stroke-width: 0.5px;
+    }
+    
+    text {
+        font-family: sans-serif;
+        font-size: 10px;
+    }
+    
+    .loader {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 200px;
+        margin-bottom: 200px;
+        left: 50%;
+        top: 50%;
+        z-index: 1;
+        border: 16px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 16px solid #3498db;
+        width: 120px;
+        height: 120px;
+        -webkit-animation: spin 2s linear infinite;
+        /* Safari */
+        animation: spin 2s linear infinite;
+    }
+    
+    .loader-div {
+        width: 750px;
+        height: 750px;
+    }
+    /* Safari */
+    
+    @-webkit-keyframes spin {
+        0% {
+            -webkit-transform: rotate(0deg);
+        }
+        100% {
+            -webkit-transform: rotate(360deg);
+        }
+    }
+    
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+<body>
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <script src="https://d3js.org/d3-selection-multi.v0.4.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.js"></script>
+    <script src="http://jdfekete.github.io/reorder.js/lib/science.v1.js"></script>
+    <script src="http://jdfekete.github.io/reorder.js/lib/tiny-queue.js"></script>
+    <script src="http://jdfekete.github.io/reorder.js/reorder.v1.js"></script>
+
+    <!-- jQuery and JS bundle w/ Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.5.1.js" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous">
+    </script>
+
+    <div class="container-fluid">
+        <div class="row plot-header">
+            <div class="col">
+                <h1 class="text-center">Graph Visualization - Infect-Dublin</h1>
+            </div>
+        </div>
+        <div class="row align-items-center">
+            <div class="col-6 row align-items-center justify-content-center" style="width: 100%;">
+                <div id="network-loader" class="loader align-items-center"></div>
+                <div id="node-link_div"></div>
+                <div class="row align-items-center alert alert-light" style="color: black">
+                    <h4 style="width: 100%; font-weight: bold;">Manual</h4>
+                    <ul>
+                        <li>Please wait for loading the node-link diagram and adjaceny matrix.</li>
+                        <li>Hover on nodes to highlight the corresponding edges & matrix grids. You can also move the nodes by dragging them.
+                        </li>
+                        <li>Hover on matrix grids to highlight the corresponding row/column & node-edges.
+                        </li>
+                        <li>The label of the matrix row/column will be shown when it is highlighted.
+                        </li>
+                        <li>The hover effects may be slow. Please be patient.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-6 row align-items-center justify-content-center" style="width: 100%;">
+                <div id="adjmat-loader" class="loader align-items-center"></div>
+                <div id="adj-matrix_div" style="width: 100%;"></div>
+                <div class="row alert alert-light " style="margin-left: 0vw ">
+                    <h6 style="width: 100%; margin-bottom: 0px; ">Reference</h6>
+                    <ul style="font-size: small; ">
+                        <li>
+                            https://bl.ocks.org/KingOfCramers/32bbcd8c360e6d8aa0d5b7a50725fe73
+                        </li>
+                        <li>
+                            https://bl.ocks.org/heybignick/3faf257bbbbc7743bb72310d03b86ee8
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<script src="0856044.js "></script>
+
+</html>
