@@ -37,7 +37,7 @@ Plotly.d3.csv(rawDataURL, function(err, rawData) {
         title: '香蕉 - 平均價',
         xaxis: {
             // rangeselector: selectorOptions,
-            rangeslider: {}
+            // rangeslider: {}
         },
         // xaxis2: {
         //     anchor: 'y',
