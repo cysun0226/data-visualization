@@ -84,7 +84,7 @@ d3.csv("data/香蕉_avg.csv", function(error, csv) {
     rect.filter(function(d) { return data.has(d); })
         .attr("class", function(d) { return "day " + color(data.get(d)); })
         .select("title")
-        .text(function(d) { return d + ": " + percent(data.get(d)); });
+        .text(function(d) { return d + " : " + String(Math.round(data.get(d))) + " 元"; });
 });
 
 function genMonthClass(t0) {
