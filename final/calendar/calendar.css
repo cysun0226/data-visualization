@@ -1,5 +1,4 @@
 body {
-    font: 10px sans-serif;
     shape-rendering: crispEdges;
 }
 
@@ -56,4 +55,26 @@ body {
 
 .RdYlGn .q0-11 {
     fill: rgb(0, 104, 55)
+}
+
+#legend {
+    margin-bottom: 2vh;
+    height: 30;
+}
+
+.year-label {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.month-label {
+    font: 12px sans-serif;
+}
+
+.day-label {
+    font-size: 11px;
+}
+
+.calendar-legend-label {
+    font-size: 14px;
 }
